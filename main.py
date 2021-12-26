@@ -137,6 +137,8 @@ if __name__ == '__main__':
     logger.info("Chat list: {}", TELEGRAM_CHAT_LIST)
     logger.info("Chat latest message id: {}", TELEGRAM_CHAT_LATEST_MSG_ID)
     asyncio.get_event_loop().run_until_complete(login())
+    logger.warning("Synchronization will start in 5 seconds")
+    time.sleep(5)
     with telegram_client:
         telegram_client.loop.run_until_complete(main())
         telegram_client.loop.run_until_complete(main_loop())

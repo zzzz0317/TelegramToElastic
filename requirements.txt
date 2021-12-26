@@ -1,0 +1,4 @@
+telethon
+python-socks
+elasticsearch
+loguru

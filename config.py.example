@@ -1,0 +1,30 @@
+from elasticsearch import Elasticsearch
+
+TELEGRAM_API_ID = "TELEGRAM_API_ID"
+TELEGRAM_API_HASH = "TELEGRAM_API_HASH"
+
+TELEGRAM_PROXY = {
+    # (mandatory) protocol to use (see above)
+    # 'proxy_type': 'socks5',
+    # (mandatory) proxy IP address
+    # 'addr': '127.0.0.1',
+    # (mandatory) proxy port number
+    # (optional) username if the proxy requires auth
+    # 'username': '12345678',
+    # (optional) password if the proxy requires auth
+    # 'password': '12345678',
+    # (optional) whether to use remote or local resolve, default remote
+    # 'rdns': True
+}
+
+TELEGRAM_PULL_ONCE = 1000
+TELEGRAM_PULL_SLEEP_SEC = 5
+
+TELEGRAM_CHAT_LIST = []
+TELEGRAM_CHAT_LATEST_MSG_ID = {}
+
+for id in TELEGRAM_CHAT_LIST:
+    TELEGRAM_CHAT_LATEST_MSG_ID[id] = 0
+
+ELASTICSEARCH_CLIENT = Elasticsearch('10.99.1.60:9200', http_auth=('Elasticsearch', 'Elasticsearch_PASS'))
+ELASTICSEARCH_INDEX = "index-telegram-xxx"

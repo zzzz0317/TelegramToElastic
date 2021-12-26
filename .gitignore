@@ -1,0 +1,5 @@
+*.session
+data
+config.py
+__pycache__/
+.idea

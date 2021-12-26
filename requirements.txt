@@ -2,3 +2,4 @@ telethon
 python-socks
 elasticsearch
 loguru
+async_timeout

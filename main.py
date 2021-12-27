@@ -99,7 +99,7 @@ async def save_to_elasticsearch(chat_id, message):
     if not doc_data:
         return
     logger.debug(doc_data)
-    elasticsearch.index(index=ELASTICSEARCH_INDEX, document=doc_data)
+    elasticsearch.index(index=ELASTICSEARCH_INDEX, id=message.id, document=doc_data)
     save_latest_chat_message_id(chat_id, message.id)
     logger.info('Submit finished: {}', doc_data)
 

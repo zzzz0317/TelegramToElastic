@@ -9,6 +9,7 @@ TELEGRAM_PROXY = {
     # (mandatory) proxy IP address
     # 'addr': '127.0.0.1',
     # (mandatory) proxy port number
+    # 'port': 1080,
     # (optional) username if the proxy requires auth
     # 'username': '12345678',
     # (optional) password if the proxy requires auth

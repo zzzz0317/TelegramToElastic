@@ -7,10 +7,6 @@ import asyncio
 import FileDict
 import time
 from loguru import logger
-import sys
-
-logger.remove(handler_id=None)
-logger.add(sys.stderr, level=LOGGER_LEVEL)
 
 telegram_client = TelegramClient('anon', TELEGRAM_API_ID, TELEGRAM_API_HASH, proxy=TELEGRAM_PROXY)
 elasticsearch = ELASTICSEARCH_CLIENT

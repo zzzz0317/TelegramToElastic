@@ -1,6 +1,9 @@
 from elasticsearch import Elasticsearch
+from loguru import logger
+import sys
 
-LOGGER_LEVEL = "DEBUG"
+logger.remove(handler_id=None)
+logger.add(sys.stderr, level="DEBUG")
 
 TELEGRAM_API_ID = "TELEGRAM_API_ID"
 TELEGRAM_API_HASH = "TELEGRAM_API_HASH"

@@ -117,7 +117,12 @@ async def process_telegram_chat_message(chat_id, offset_id, limit=1000):
             # await print_message(chat_id, message)
             await save_to_elasticsearch(chat_id, message)
     except PeerIdInvalidError as e:
-        logger.error("Invalid peer #{} reported by telethon. We'll resume collecting in 5 seconds", chat_id)
+        logger.error("Invalid peer #{} reported by telethon ({}). We'll resume collecting in 5 seconds", chat_id, e)
+        logger.error("We'll skip this entity and resume collecting in 5 seconds.")
+        time.sleep(5)
+    except ValueError as e:
+        logger.error("Invalid peer #{} reported by telethon ({}).", chat_id, e)
+        logger.error("We'll skip this entity and resume collecting in 5 seconds.")
         time.sleep(5)
 
 

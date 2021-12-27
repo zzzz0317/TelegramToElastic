@@ -100,10 +100,11 @@ async def save_to_elasticsearch(chat_id, message):
     if not doc_data:
         return
     logger.debug(doc_data)
-    elasticsearch.index(index=ELASTICSEARCH_INDEX, id=message.id, document=doc_data)
+    index_id = "{}.{}".format(chat_id, message.id)
+    elasticsearch.index(index=ELASTICSEARCH_INDEX, id=index_id, document=doc_data)
     save_latest_chat_message_id(chat_id, message.id)
     log_info = "msg #{} from \"{}\" by \"{}\": {}".format(
-        doc_data["message_id"],
+        index_id,
         doc_data["chat_name"],
         doc_data["sender"]["user_firstname"],
         doc_data["text"].split("\n"))

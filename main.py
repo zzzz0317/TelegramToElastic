@@ -1,11 +1,16 @@
 from config import *
 from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError
+from telethon.errors.rpcerrorlist import PeerIdInvalidError
 from telethon.utils import get_display_name
 import asyncio
 import FileDict
 import time
 from loguru import logger
+import sys
+
+logger.remove(handler_id=None)
+logger.add(sys.stderr, level=LOGGER_LEVEL)
 
 telegram_client = TelegramClient('anon', TELEGRAM_API_ID, TELEGRAM_API_HASH, proxy=TELEGRAM_PROXY)
 elasticsearch = ELASTICSEARCH_CLIENT
@@ -50,7 +55,7 @@ async def main_loop():
             latest_chat_message_id = get_latest_chat_message_id(chat_id)
             logger.info("Get message from chat #{}, offset={}", chat_id, latest_chat_message_id)
             await process_telegram_chat_message(chat_id, latest_chat_message_id, TELEGRAM_PULL_ONCE)
-        logger.debug("Sleep {}s", TELEGRAM_PULL_SLEEP_SEC)
+        logger.info("Sleep {}s", TELEGRAM_PULL_SLEEP_SEC)
         time.sleep(TELEGRAM_PULL_SLEEP_SEC)
 
 
@@ -101,14 +106,23 @@ async def save_to_elasticsearch(chat_id, message):
     logger.debug(doc_data)
     elasticsearch.index(index=ELASTICSEARCH_INDEX, id=message.id, document=doc_data)
     save_latest_chat_message_id(chat_id, message.id)
-    logger.info('Submit finished: {}', doc_data)
+    log_info = "msg #{} from \"{}\" by \"{}\": {}".format(
+        doc_data["message_id"],
+        doc_data["chat_name"],
+        doc_data["sender"]["user_firstname"],
+        doc_data["text"].split("\n"))
+    logger.info('Submitted {}', log_info)
 
 
 async def process_telegram_chat_message(chat_id, offset_id, limit=1000):
-    entity = await telegram_client.get_entity(chat_id)
-    async for message in telegram_client.iter_messages(entity, reverse=True, offset_id=offset_id, limit=limit):
-        # await print_message(chat_id, message)
-        await save_to_elasticsearch(chat_id, message)
+    try:
+        entity = await telegram_client.get_entity(chat_id)
+        async for message in telegram_client.iter_messages(entity, reverse=True, offset_id=offset_id, limit=limit):
+            # await print_message(chat_id, message)
+            await save_to_elasticsearch(chat_id, message)
+    except PeerIdInvalidError as e:
+        logger.error("Invalid peer #{} reported by telethon. We'll resume collecting in 5 seconds", chat_id)
+        time.sleep(5)
 
 
 def init_latest_channel_message_id():
@@ -133,6 +147,7 @@ def get_latest_chat_message_id(chat_id):
 
 
 if __name__ == '__main__':
+    logger.debug("DEBUG Log is enabled!")
     init_latest_channel_message_id()
     logger.info("Chat list: {}", TELEGRAM_CHAT_LIST)
     logger.info("Chat latest message id: {}", TELEGRAM_CHAT_LATEST_MSG_ID)

@@ -32,5 +32,5 @@ TELEGRAM_CHAT_LATEST_MSG_ID = {}
 for id in TELEGRAM_CHAT_LIST:
     TELEGRAM_CHAT_LATEST_MSG_ID[id] = 0
 
-ELASTICSEARCH_CLIENT = Elasticsearch('10.99.1.60:9200', http_auth=('Elasticsearch', 'Elasticsearch_PASS'))
+ELASTICSEARCH_CLIENT = Elasticsearch('127.0.0.1:9200', http_auth=('elastic', 'Elasticsearch_PASS'))
 ELASTICSEARCH_INDEX = "index-telegram-xxx"

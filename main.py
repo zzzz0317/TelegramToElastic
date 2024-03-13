@@ -1,7 +1,7 @@
 from config import *
 from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError
-from telethon.errors.rpcerrorlist import PeerIdInvalidError
+from telethon.errors.rpcerrorlist import PeerIdInvalidError, ChannelInvalidError, ChannelPrivateError
 from telethon.utils import get_display_name
 import asyncio
 import FileDict
@@ -117,6 +117,16 @@ async def process_telegram_chat_message(chat_id, offset_id, limit=1000):
         async for message in telegram_client.iter_messages(entity, reverse=True, offset_id=offset_id, limit=limit):
             # await print_message(chat_id, message)
             await save_to_elasticsearch(chat_id, message)
+    except ChannelInvalidError as e:
+        TELEGRAM_CHAT_LIST.remove(chat_id)
+        logger.error("Channel Invalid Error #{} reported by telethon ({}). We'll resume collecting in 5 seconds", chat_id, e)
+        logger.error("We'll remove this entity and resume collecting in 5 seconds.")
+        time.sleep(5)
+    except ChannelPrivateError as e:
+        TELEGRAM_CHAT_LIST.remove(chat_id)
+        logger.error("Channel Private Error #{} reported by telethon ({}). We'll resume collecting in 5 seconds", chat_id, e)
+        logger.error("We'll remove this entity and resume collecting in 5 seconds.")
+        time.sleep(5)
     except PeerIdInvalidError as e:
         logger.error("Invalid peer #{} reported by telethon ({}). We'll resume collecting in 5 seconds", chat_id, e)
         logger.error("We'll skip this entity and resume collecting in 5 seconds.")

@@ -32,3 +32,8 @@ python main.py
 * 文件头部的 import
 * TELEGRAM_CHAT_LATEST_MSG_ID
 
+## Docker
+
+使用 `docker` 文件夹内的文件辅助您将此应用 Docker 化。
+
+不要忘记修改几个脚本内的 `/srv/pods/telegram-to-elastic` 为您的文件存放目录。

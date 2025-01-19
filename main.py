@@ -135,6 +135,12 @@ async def process_telegram_chat_message(chat_id, offset_id, limit=1000):
         logger.error("Invalid peer #{} reported by telethon ({}).", chat_id, e)
         logger.error("We'll skip this entity and resume collecting in 5 seconds.")
         time.sleep(5)
+    except KeyError as e:
+        # 用户账号销户时会抛此异常
+        TELEGRAM_CHAT_LIST.remove(chat_id)
+        logger.error("Invalid key #{} reported by telethon ({}).", chat_id, e)
+        logger.error("We'll skip this entity and resume collecting in 5 seconds.")
+        time.sleep(5)
 
 
 def init_latest_channel_message_id():
